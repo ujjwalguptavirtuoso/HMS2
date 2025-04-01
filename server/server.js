@@ -35,7 +35,7 @@ app.use(
 );
 
 //db connection
-const uri = `${process.env.ATLAS_URI}/E-healthcare`;
+const uri = `${process.env.ATLAS_URI}/hms`;
 mongoose
   .connect(uri)
   .then(() =>

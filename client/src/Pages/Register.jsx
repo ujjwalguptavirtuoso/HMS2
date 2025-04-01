@@ -14,7 +14,6 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [nic, setNic] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +37,6 @@ const Register = () => {
             lastName,
             email,
             phone,
-            nic,
             dob,
             gender,
             password,
@@ -57,7 +55,6 @@ const Register = () => {
           setLastName("");
           setEmail("");
           setPhone("");
-          setNic("");
           setDob("");
           setGender("");
           setPassword("");
@@ -140,19 +137,10 @@ const Register = () => {
                 <input
                   className="w-96 h-10 bg-zinc-200 rounded-2xl px-4 outline-none"
                   type="text"
-                  placeholder="Aadhar No."
-                  value={nic}
-                  onChange={(e) => setNic(e.target.value)}
-                />
-                <input
-                  className="w-96 h-10 bg-zinc-200 rounded-2xl px-4 outline-none"
-                  type="text"
                   placeholder="Date Of Birth"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                 />
-              </div>
-              <div className=" w-full flex justify-around mb-6">
                 <label className="w-96 h-10 bg-zinc-200 rounded-2xl px-4">
                   <select
                     className="w-fit h-10 bg-zinc-200 rounded-2xl  border-0 outline-none"
@@ -168,10 +156,12 @@ const Register = () => {
                     <option value="nosay">prefer not to say</option>
                   </select>
                 </label>
+              </div>
+              <div className=" w-full flex justify-around mb-6">
                 <input
                   className="w-96 h-10 bg-zinc-200 rounded-2xl px-4 outline-none"
                   type="password"
-                  placeholder="Password"
+                  placeholder="Set up your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />

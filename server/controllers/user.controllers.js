@@ -1,5 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { User } from "../models/user.model.js";
+import { Patient } from "../models/patient.model.js";
+import { Doctor } from "../models/doctor.model.js";
 import ErrorHandler from "../middlewares/error.middlewares.js";
 import { generateToken } from "../utils/jwtToken.js";
 import { resModel } from "../utils/response.js";
@@ -56,40 +58,80 @@ const validateFields = (fields) => {
 
 /*:::::::::::::::::::::::::::::::::::::::::::::::PATIENT-REGISTRATION:::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 
-export const registerPatient = asyncHandler(async (req, res, next) => {
-  const { firstName, lastName, email, phone, nic, dob, gender, password } =
-    req.body;
+// export const registerPatient = asyncHandler(async (req, res, next) => {
+//   const { firstName, lastName, email, phone, nic, dob, gender, password } =
+//     req.body;
   
-    validateFields({
-      firstName,
-      lastName,
-      email,
-      phone,
-      nic,
-      dob,
-      gender,
-      password,
-    });
+//     validateFields({
+//       firstName,
+//       lastName,
+//       email,
+//       phone,
+//       nic,
+//       dob,
+//       gender,
+//       password,
+//     });
 
-  const isRegistered = await User.findOne({ $or: [{ email: email }, {phone: phone}] });
-  if (isRegistered) {
-    return next(new ErrorHandler("User already Registered!", 400));
-  }
+//   const isRegistered = await User.findOne({ $or: [{ email: email }, {phone: phone}] });
+//   if (isRegistered) {
+//     return next(new ErrorHandler("User already Registered!", 400));
+//   }
 
-  const user = await User.create({
+//   const user = await User.create({
+//     firstName,
+//     lastName,
+//     email,
+//     phone,
+//     nic,
+//     dob,
+//     gender,
+//     password,
+//     role: "Patient",
+//   });
+
+//   const payload=await User.findById(user._id).select("-password -refreshToken")
+//   generateToken(payload, "User Registered!", 201, res);
+// });
+
+export const registerPatient = asyncHandler(async (req, res, next) => {
+  // Destructure fields from the request body
+  const { firstName, lastName, email, phone, dob, gender, password } = req.body;
+
+  // Validate the required fields
+  validateFields({
     firstName,
     lastName,
     email,
     phone,
-    nic,
     dob,
     gender,
     password,
-    role: "Patient",
   });
 
-  const payload=await User.findById(user._id).select("-password -refreshToken")
-  generateToken(payload, "User Registered!", 201, res);
+  // Check if the patient already exists by email or phone
+  const isRegistered = await Patient.findOne({ $or: [{ email: email }, { phone: phone }] });
+  if (isRegistered) {
+    return next(new ErrorHandler("Patient already registered with this email or phone!", 400));
+  }
+
+  // Create a new patient document in the database
+  const patient = await Patient.create({
+    firstName,
+    lastName,
+    email,
+    phone,
+    dob,
+    gender,
+    password,
+    role: "Patient", // Explicitly set the role to Patient
+  });
+
+  // Find the created patient without password and sensitive data
+  const payload = await Patient.findById(patient._id).select("-password -refreshToken");
+
+  // Generate JWT token for the patient
+  generateToken(payload, "Patient registered successfully!", 201, res);
 });
 
 /*:::::::::::::::::::::::::::::::::::::::::::::::ADMIN-REGISTRATION:::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
@@ -131,72 +173,109 @@ export const registerAdmin=asyncHandler(async (req,res,next)=>{
 
 /*:::::::::::::::::::::::::::::::::::::::::::::::DOCTOR-REGISTRATION:::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 
+// export const registerDoctor = asyncHandler(async (req, res, next) => {
+//   console.log(req.files)
+//   if (!req.files || Object.keys(req.files).length === 0) {
+//     return next(new ErrorHandler("Doctor Avatar Required!", 400));
+//   }
+//   const { avatar } = req.files;
+//   const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
+//   if (!allowedFormats.includes(avatar.mimetype)) {
+//     return next(new ErrorHandler("File Format Not Supported!", 400));
+//   }
+
+//   const { firstName, lastName, email, phone, nic, dob, gender, doctorDepartment, password } =
+//     req.body;
+
+//     console.log(typeof dob)
+
+//   validateFields({
+//     firstName,
+//     lastName,
+//     email,
+//     phone,
+//     nic,
+//     dob,
+//     gender,
+//     doctorDepartment,
+//     password,
+//   });
+
+//   const isRegistered = await User.findOne({ $or: [{ email: email }, { phone: phone }] });
+//   if (isRegistered) {
+//     return next(new ErrorHandler("Doctor already Registered!", 400));
+//   }
+
+//    const cloudinaryResponse = await cloudinary.uploader.upload(
+//      avatar.tempFilePath
+//    );
+//    if (!cloudinaryResponse || cloudinaryResponse.error) {
+//      console.error(
+//        "Cloudinary Error:",
+//        cloudinaryResponse.error || "Unknown Cloudinary error"
+//      );
+//      return next(
+//        new ErrorHandler("Failed To Upload Doctor Avatar To Cloudinary", 500)
+//      );
+//    }
+
+//   const doc = await User.create({
+//     firstName,
+//     lastName,
+//     email,
+//     phone,
+//     nic,
+//     dob,
+//     gender,
+//     password,
+//     doctorDepartment,
+//     role: "Doctor",
+//     avatar: {
+//       public_id: cloudinaryResponse.public_id,
+//       url: cloudinaryResponse.secure_url,
+//     },
+//   });
+
+//   const payload = await User.findById(doc._id).select(
+//     "-password -refreshToken"
+//   );
+//   generateToken(payload, "Doctor Registered!", 201, res);
+// });
+
+
 export const registerDoctor = asyncHandler(async (req, res, next) => {
-  console.log(req.files)
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("Doctor Avatar Required!", 400));
-  }
-  const { avatar } = req.files;
-  const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
-  if (!allowedFormats.includes(avatar.mimetype)) {
-    return next(new ErrorHandler("File Format Not Supported!", 400));
-  }
+  // Extract doctor fields from request body
+  const { firstName, lastName, email, phone, dob, gender, password, doctorDepartment, yearsOfExperience, licenseNumber } = req.body;
 
-  const { firstName, lastName, email, phone, nic, dob, gender, doctorDepartment, password } =
-    req.body;
-
-    console.log(typeof dob)
-
-  validateFields({
-    firstName,
-    lastName,
-    email,
-    phone,
-    nic,
-    dob,
-    gender,
-    doctorDepartment,
-    password,
-  });
-
-  const isRegistered = await User.findOne({ $or: [{ email: email }, { phone: phone }] });
+  
+  // Validate if doctor already exists
+  const isRegistered = await Doctor.findOne({ $or: [{ email }, { phone }] });
   if (isRegistered) {
     return next(new ErrorHandler("Doctor already Registered!", 400));
   }
 
-   const cloudinaryResponse = await cloudinary.uploader.upload(
-     avatar.tempFilePath
-   );
-   if (!cloudinaryResponse || cloudinaryResponse.error) {
-     console.error(
-       "Cloudinary Error:",
-       cloudinaryResponse.error || "Unknown Cloudinary error"
-     );
-     return next(
-       new ErrorHandler("Failed To Upload Doctor Avatar To Cloudinary", 500)
-     );
-   }
+  // Hash the password
+  //const hashedPassword = await bcrypt.hash(password, 10);
 
-  const doc = await User.create({
+  // Create Doctor entry in the database (no avatar field)
+  const doctor = await Doctor.create({
     firstName,
     lastName,
     email,
     phone,
-    nic,
     dob,
     gender,
     password,
     doctorDepartment,
+    yearsOfExperience,
+    licenseNumber,
     role: "Doctor",
-    avatar: {
-      public_id: cloudinaryResponse.public_id,
-      url: cloudinaryResponse.secure_url,
-    },
   });
 
-  const payload = await User.findById(doc._id).select(
-    "-password -refreshToken"
-  );
+  // Prepare response payload (hide password)
+  const payload = await Doctor.findById(doctor._id).select("-password -refreshToken");
+
+  // Generate JWT Token & send response
   generateToken(payload, "Doctor Registered!", 201, res);
 });
 

@@ -7,6 +7,7 @@ import Appointment from "./Pages/Appointment";
 import QuickHelp from "./Pages/QuickHelp";
 import Login from "./Pages/login";
 import Register from "./Pages/Register";
+import RegisterDoctor from "./Pages/RegisterDoctor";
 import DiabetesPredictor from "./Pages/DiabetesPredictor";
 import ThyroidPredictor from "./Pages/ThyroidPredictor";
 import Loginadmin from "./Pages/loginadmin";
@@ -62,6 +63,7 @@ const App = () => {
           <Route path="/logindoctor" element={<Logindoctor />} />
           <Route path="/loginadmin" element={<Loginadmin />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-doctor" element={<RegisterDoctor />} />
           <Route path="/admin" element={<AdminHome />} />
           <Route path="/messages" element={<MessagesDisp />} />
           <Route path="/doctor-addnew" element={<AddDoctor />} />

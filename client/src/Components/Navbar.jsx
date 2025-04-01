@@ -104,6 +104,11 @@ export const Navbar = () => {
     navigateTo("/register");
   };
 
+  const goToRegisterDoctor = () => {
+    navigateTo("/register-doctor");
+  };
+
+
   return (
     <nav className="w-full h-16 flex justify-between items-center px-5">
       <div className="logo w-10">
@@ -154,7 +159,7 @@ export const Navbar = () => {
         <div className="flex">
           <button
             className="w-36 h-12 bg-[#76dbcf] rounded-2xl font-semibold mr-3"
-            onClick={goToRegister}
+            onClick={goToRegisterDoctor}
           >
             REGISTER FOR DOCTOR
           </button>
