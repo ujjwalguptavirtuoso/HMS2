@@ -8,8 +8,6 @@ import QuickHelp from "./Pages/QuickHelp";
 import Login from "./Pages/login";
 import Register from "./Pages/Register";
 import RegisterDoctor from "./Pages/RegisterDoctor";
-import DiabetesPredictor from "./Pages/DiabetesPredictor";
-import ThyroidPredictor from "./Pages/ThyroidPredictor";
 import Loginadmin from "./Pages/loginadmin";
 import Logindoctor from "./Pages/logindoctor";
 import AdminHome from "./Pages/AdminHome";
@@ -20,7 +18,6 @@ import Doctors from "./Pages/Doctors";
 import { useContext } from "react";
 import { useEffect } from "react";
 import { Context } from "./main";
-import HeartDiseasePredictor from "./Pages/HeartDiseasePredictor";
 import Test from "./Pages/test";
 import DoctorHome from "./Pages/DoctorHome";
 import PatientHome from "./Pages/PatientHome";
@@ -56,9 +53,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/quick-help" element={<QuickHelp />} />
-          <Route path="/diabetes-predictor" element={<DiabetesPredictor />} />
-          <Route path="/thyroid-predictor" element={<ThyroidPredictor />} />
-          <Route path="/heart-disease-predictor" element={<HeartDiseasePredictor />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logindoctor" element={<Logindoctor />} />
           <Route path="/loginadmin" element={<Loginadmin />} />
